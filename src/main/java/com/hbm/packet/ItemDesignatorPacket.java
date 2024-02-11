@@ -7,6 +7,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -55,11 +57,16 @@ public class ItemDesignatorPacket implements IMessage {
 					if(stack == null || stack.getItem() != ModItems.designator_manual)
 						return;
 				}
-				if(!stack.hasTagCompound())
+				if(!stack.hasTagCompound() && m.x > 1500 && m.z > 1500 || m.x < -1500 && m.z < -1500)
 					stack.setTagCompound(new NBTTagCompound());
-
-				stack.getTagCompound().setInteger("xCoord", m.x);
-				stack.getTagCompound().setInteger("zCoord", m.z);
+				if(m.x > 1500 && m.z > 1500 || m.x < -1500 && m.z < -1500) {
+					stack.getTagCompound().setInteger("xCoord", m.x);
+					stack.getTagCompound().setInteger("zCoord", m.z);
+				} else {
+					if(p.world.isRemote) {
+						p.sendMessage(new TextComponentString(TextFormatting.RED + "The coordinates must be at least 1500 blocks from the center of the map."));
+					}
+				}
 			});
 			return null;
 		}

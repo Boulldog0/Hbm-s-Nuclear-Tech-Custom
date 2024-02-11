@@ -2,6 +2,8 @@ package com.hbm.items.tool;
 
 import java.util.List;
 
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import org.apache.logging.log4j.Level;
 
 import com.hbm.config.GeneralConfig;
@@ -45,14 +47,19 @@ public class ItemLaserDetonator extends Item {
 		if(!world.isRemote)
 		{
 	    	if(world.getBlockState(pos).getBlock() instanceof IBomb) {
-	    		((IBomb)world.getBlockState(pos).getBlock()).explode(world, pos);
+				if(pos.getX() > 1500 && pos.getY() > 1500 || pos.getX() < -1500 && pos.getZ() < 1500) {
+					((IBomb) world.getBlockState(pos).getBlock()).explode(world, pos);
 
-	    		if(GeneralConfig.enableExtendedLogging)
-	    			MainRegistry.logger.log(Level.INFO, "[DET] Tried to detonate block at " + pos.getX() + " / " + pos.getY() + " / " + pos.getZ() + " by " + player.getDisplayName() + "!");
-	    		
-	    		player.sendMessage(new TextComponentTranslation("§2[Detonated]§r"));
-	        	world.playSound(null, player.posX, player.posY, player.posZ, HBMSoundHandler.techBleep, SoundCategory.AMBIENT, 1.0F, 1.0F);
-	        	
+					if (GeneralConfig.enableExtendedLogging)
+						MainRegistry.logger.log(Level.INFO, "[DET] Tried to detonate block at " + pos.getX() + " / " + pos.getY() + " / " + pos.getZ() + " by " + player.getDisplayName() + "!");
+
+					player.sendMessage(new TextComponentTranslation("§2[Detonated]§r"));
+					world.playSound(null, player.posX, player.posY, player.posZ, HBMSoundHandler.techBleep, SoundCategory.AMBIENT, 1.0F, 1.0F);
+				} else {
+					if(world.isRemote) {
+						player.sendMessage(new TextComponentString(TextFormatting.RED + "Coordinates in detonator can must be at least 1500 blocks from the center of the map."));
+					}
+				}
 	    	} else {
 	    		player.sendMessage(new TextComponentTranslation("§cTarget can not be detonated.§r"));
 	        	world.playSound(null, player.posX, player.posY, player.posZ, HBMSoundHandler.techBleep, SoundCategory.AMBIENT, 1.0F, 1.0F);

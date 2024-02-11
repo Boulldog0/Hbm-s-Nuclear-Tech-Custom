@@ -21,7 +21,9 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.RayTraceResult.Type;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
 public class ItemBombCaller extends Item {
@@ -80,41 +82,47 @@ public class ItemBombCaller extends Item {
 			int y = trace.getBlockPos().getY();
 			int z = trace.getBlockPos().getZ();
 
+			if(x > 1500 && z > 1500 || x < -1500 && z < -1500)  {
 			switch (getTypeFromStack(stack)) {
-			case CARPET:
-				if (world.spawnEntity(EntityBomber.statFacCarpet(world, x, y, z)))
-					b = true;
-				break;
-			case NAPALM:
-				if (world.spawnEntity(EntityBomber.statFacNapalm(world, x, y, z)))
-					b = true;
-				break;
-			case POISON:
-				if (world.spawnEntity(EntityBomber.statFacChlorine(world, x, y, z)))
-					b = true;
-				break;
-			case ORANGE:
-				if (world.spawnEntity(EntityBomber.statFacOrange(world, x, y, z)))
-					b = true;
-				break;
-			case ATOMIC:
-				if (world.spawnEntity(EntityBomber.statFacABomb(world, x, y, z)))
-					b = true;
-				break;
-			case STINGER:
-				if (world.spawnEntity(EntityBomber.statFacStinger(world, x, y, z)))
-					b = true;
-				break;
-			case PIP:
-				if (world.spawnEntity(EntityBomber.statFacBoxcar(world, x, y, z)))
-					b = true;
-				break;
-			case CLOUD:
-				if (world.spawnEntity(EntityBomber.statFacPC(world, x, y, z)))
-					b = true;
-				break;
-			default:
-				break;
+				case CARPET:
+					if (world.spawnEntity(EntityBomber.statFacCarpet(world, x, y, z)))
+						b = true;
+					break;
+				case NAPALM:
+					if (world.spawnEntity(EntityBomber.statFacNapalm(world, x, y, z)))
+						b = true;
+					break;
+				case POISON:
+					if (world.spawnEntity(EntityBomber.statFacChlorine(world, x, y, z)))
+						b = true;
+					break;
+				case ORANGE:
+					if (world.spawnEntity(EntityBomber.statFacOrange(world, x, y, z)))
+						b = true;
+					break;
+				case ATOMIC:
+					if (world.spawnEntity(EntityBomber.statFacABomb(world, x, y, z)))
+						b = true;
+					break;
+				case STINGER:
+					if (world.spawnEntity(EntityBomber.statFacStinger(world, x, y, z)))
+						b = true;
+					break;
+				case PIP:
+					if (world.spawnEntity(EntityBomber.statFacBoxcar(world, x, y, z)))
+						b = true;
+					break;
+				case CLOUD:
+					if (world.spawnEntity(EntityBomber.statFacPC(world, x, y, z)))
+						b = true;
+					break;
+				default:
+					break;
+			  }
+			} else {
+				if(world.isRemote) {
+					playerIn.sendMessage(new TextComponentString(TextFormatting.RED + "You can only call an airstrike if you are more than 1500 blocks from the center of the map"));
+				}
 			}
 			if (b) {
 				playerIn.sendMessage(new TextComponentTranslation("Called in airstrike!"));

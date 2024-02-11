@@ -17,7 +17,9 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
 public class ItemDesignator extends Item {
@@ -56,18 +58,27 @@ public class ItemDesignator extends Item {
 		{
 			if(stack.getTagCompound() != null)
 			{
-				stack.getTagCompound().setInteger("xCoord", pos.getX());
-				stack.getTagCompound().setInteger("zCoord", pos.getZ());
+				if(pos.getX() > 1500 && pos.getZ() > 1500 || pos.getX() < -1500 && pos.getZ() < -1500) {
+					stack.getTagCompound().setInteger("xCoord", pos.getX());
+					stack.getTagCompound().setInteger("zCoord", pos.getZ());
+				} else {
+					player.sendMessage(new TextComponentString(TextFormatting.RED + "The coordinates must be at least 1500 blocks from the center of the map."));
+				}
 			} else {
-				stack.setTagCompound(new NBTTagCompound());
-				stack.getTagCompound().setInteger("xCoord", pos.getX());
-				stack.getTagCompound().setInteger("zCoord", pos.getZ());
+				if(pos.getX() > 1500 && pos.getZ() > 1500 || pos.getX() < -1500 && pos.getZ() < -1500) {
+					stack.setTagCompound(new NBTTagCompound());
+					stack.getTagCompound().setInteger("xCoord", pos.getX());
+					stack.getTagCompound().setInteger("zCoord", pos.getZ());
+					if(world.isRemote)
+					{
+						player.sendMessage(new TextComponentTranslation("§a[Position set]§r"));
+					}
+				} else {
+					if(world.isRemote) {
+						player.sendMessage(new TextComponentString(TextFormatting.RED + "The coordinates must be at least 1500 blocks from the center of the map."));
+					}
+				}
 			}
-	        if(world.isRemote)
-			{
-	        	player.sendMessage(new TextComponentTranslation("§a[Position set]§r"));
-			}
-
 	        world.playSound(player.posX, player.posY, player.posZ, HBMSoundHandler.techBleep, SoundCategory.PLAYERS, 1.0F, 1.0F, true);
         	
 	        return EnumActionResult.SUCCESS;

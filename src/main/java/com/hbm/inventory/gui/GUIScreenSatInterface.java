@@ -3,6 +3,8 @@ package com.hbm.inventory.gui;
 import java.util.Arrays;
 import java.util.List;
 
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.opengl.GL11;
 
 import com.hbm.inventory.MachineRecipes;
@@ -49,16 +51,24 @@ public class GUIScreenSatInterface extends GuiScreen {
     }
 
     protected void mouseClicked(int i, int j, int k) {
-    	
+
     	if(ItemSatInterface.currentSat != null && ItemSatInterface.currentSat.ifaceAcs.contains(InterfaceActions.CAN_CLICK)) {
 
     		if(i >= this.guiLeft + 8 && i < this.guiLeft + 208 && j >= this.guiTop + 8 && j < this.guiTop + 208 && player != null) {
-    			
-    			mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(HBMSoundHandler.techBleep, 1.0F));
-    			
     			int x = this.x - guiLeft + i - 8 - 100;
     			int z = this.z - guiTop + j - 8 - 100;
-    			PacketDispatcher.wrapper.sendToServer(new SatLaserPacket(x, z, ItemSatInterface.getFreq(player.getHeldItemMainhand())));
+
+				if(x > 1500 && z > 1500 || x < -1500 && z < -1500) {
+					player.getHeldItemMainhand().damageItem(1, player);
+					mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(HBMSoundHandler.techBleep, 1.0F));
+					PacketDispatcher.wrapper.sendToServer(new SatLaserPacket(x, z, ItemSatInterface.getFreq(player.getHeldItemMainhand())));
+				} else {
+					mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(HBMSoundHandler.techBoop, 1.0F));
+					if(player.world.isRemote) {
+						player.closeScreen();
+						player.sendMessage(new TextComponentString(TextFormatting.RED + "Satellite air strikes can only be carried out at coordinates greater than 1500 blocks from the center of the map"));
+					}
+				}
     		}
     	}
     }
@@ -99,9 +109,19 @@ public class GUIScreenSatInterface extends GuiScreen {
     		
     		if(i >= this.guiLeft + 8 && i < this.guiLeft + 208 && j >= this.guiTop + 8 && j < this.guiTop + 208 && player != null) {
 
+				boolean v = false;
+
     			int x = this.x - guiLeft + i - 8 - 100;
     			int z = this.z - guiTop + j - 8 - 100;
-    			drawHoveringText(Arrays.asList(new String[] { x + " / " + z }), i, j);
+
+				if(x > 1500 && z > 1500 || x < -1500 && z < -1500) {
+					v = true;
+				} else {
+					v = false;
+				}
+
+				String formatting = v ? "§2" : "§c";
+    			drawHoveringText(Arrays.asList(new String[] {formatting + x + " / " + z }), i, j);
     		}
     	}
 	}

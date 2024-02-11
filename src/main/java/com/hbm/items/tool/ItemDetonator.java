@@ -2,6 +2,8 @@ package com.hbm.items.tool;
 
 import java.util.List;
 
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import org.apache.logging.log4j.Level;
 
 import com.hbm.config.GeneralConfig;
@@ -55,13 +57,18 @@ public class ItemDetonator extends Item {
 		
 		if(player.isSneaking())
 		{
-			stack.getTagCompound().setInteger("x", pos.getX());
-			stack.getTagCompound().setInteger("y", pos.getY());
-			stack.getTagCompound().setInteger("z", pos.getZ());
-			
-			if(world.isRemote)
-			{
-				player.sendMessage(new TextComponentTranslation("§a[Position set]§r"));
+			if(pos.getX() > 1500 && pos.getZ() > 1500 || pos.getX() < -1500 && pos.getZ() < -1500) {
+				stack.getTagCompound().setInteger("x", pos.getX());
+				stack.getTagCompound().setInteger("y", pos.getY());
+				stack.getTagCompound().setInteger("z", pos.getZ());
+				if(world.isRemote)
+				{
+					player.sendMessage(new TextComponentTranslation("§a[Position set]§r"));
+				}
+			} else {
+				if(world.isRemote) {
+					player.sendMessage(new TextComponentString(TextFormatting.RED + "Coordinates in detonator can must be at least 1500 blocks from the center of the map."));
+				}
 			}
 			
 	        world.playSound(null, player.posX, player.posY, player.posZ, HBMSoundHandler.techBoop, SoundCategory.AMBIENT, 1.0F, 1.0F);

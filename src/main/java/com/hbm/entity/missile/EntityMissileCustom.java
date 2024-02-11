@@ -70,9 +70,9 @@ public class EntityMissileCustom extends Entity implements IChunkLoader, IRadarD
 	public EntityMissileCustom(World world, float x, float y, float z, int a, int b, MissileStruct template) {
 		super(world);
 		this.ignoreFrustumCheck = true;
-		/*this.posX = x;
+		this.posX = x;
 		this.posY = y;
-		this.posZ = z;*/
+		this.posZ = z;
 		this.setLocationAndAngles(x, y, z, 0, 0);
 		startX = (int) x;
 		startZ = (int) z;

@@ -6,6 +6,7 @@ import com.hbm.saveddata.satellites.SatelliteSavedData;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -55,7 +56,7 @@ public class SatLaserPacket implements IMessage {
 				if(!ctx.getServerHandler().player.world.isBlockLoaded(new BlockPos(m.x, 0, m.z)))
 					return;
 				if(p.getHeldItemMainhand().getItem() instanceof ItemSatInterface) {
-					
+
 					int freq = ItemSatInterface.getFreq(p.getHeldItemMainhand());
 					
 					if(freq == m.freq) {
